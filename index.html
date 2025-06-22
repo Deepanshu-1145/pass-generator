@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Password Generator with Manual Edit</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #2b2b2b;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: #333;
+      padding: 20px 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #000;
+      width: 320px;
+    }
+    .container h2 {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .output {
+      background: #444;
+      padding: 10px;
+      border-radius: 5px;
+      font-size: 1.1em;
+      display: flex;
+      align-items: center;
+    }
+    .output input {
+      background: none;
+      border: none;
+      color: #fff;
+      width: 100%;
+      font-size: 1em;
+      outline: none;
+      cursor: text;
+    }
+    .controls {
+      margin-top: 20px;
+    }
+    .controls label {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+    .controls input[type="checkbox"] {
+      margin-right: 10px;
+      cursor: pointer;
+    }
+    .length {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 15px;
+      background: #00b894;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #019875;
+    }
+    .auto-gen-toggle {
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Password Generator</h2>
+    
+    <div class="auto-gen-toggle">
+      <label>
+        <input type="checkbox" id="autoGenerate" checked />
+        Auto-generate password
+      </label>
+    </div>
+
+    <div class="output">
+      <input type="text" id="password" />
+    </div>
+
+    <div class="controls">
+      <div class="length">
+        <label for="length">Length: <span id="lengthValue">12</span></label>
+        <input type="range" id="length" min="6" max="32" value="12" />
+      </div>
+      <label><input type="checkbox" id="uppercase" checked /> Include Uppercase</label>
+      <label><input type="checkbox" id="lowercase" checked /> Include Lowercase</label>
+      <label><input type="checkbox" id="numbers" checked /> Include Numbers</label>
+      <label><input type="checkbox" id="symbols" checked /> Include Symbols</label>
+    </div>
+
+    <button onclick="generatePassword()">Generate Password</button>
+  </div>
+
+  <script>
+    const passwordField = document.getElementById('password');
+    const lengthSlider = document.getElementById('length');
+    const lengthValue = document.getElementById('lengthValue');
+    const uppercase = document.getElementById('uppercase');
+    const lowercase = document.getElementById('lowercase');
+    const numbers = document.getElementById('numbers');
+    const symbols = document.getElementById('symbols');
+    const autoGenerateCheckbox = document.getElementById('autoGenerate');
+
+    const upperSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const lowerSet = "abcdefghijklmnopqrstuvwxyz";
+    const numberSet = "0123456789";
+    const symbolSet = "!@#$%^&*()-_+=<>/";
+
+    // Update length label
+    function updateLengthLabel() {
+      lengthValue.textContent = lengthSlider.value;
+    }
+
+    // Generate password function
+    function generatePassword() {
+      if (!autoGenerateCheckbox.checked) {
+        // Do not generate if auto-generate is off
+        return;
+      }
+
+      let chars = '';
+      if (uppercase.checked) chars += upperSet;
+      if (lowercase.checked) chars += lowerSet;
+      if (numbers.checked) chars += numberSet;
+      if (symbols.checked) chars += symbolSet;
+
+      if (chars.length === 0) {
+        passwordField.value = "Select options!";
+        return;
+      }
+
+      let password = '';
+      for (let i = 0; i < lengthSlider.value; i++) {
+        password += chars[Math.floor(Math.random() * chars.length)];
+      }
+
+      passwordField.value = password;
+    }
+
+    // On inputs change, update length label and generate password (if auto enabled)
+    [lengthSlider, uppercase, lowercase, numbers, symbols].forEach(input => {
+      input.addEventListener('input', () => {
+        updateLengthLabel();
+        generatePassword();
+      });
+    });
+
+    // Auto-generate toggle change handler
+    autoGenerateCheckbox.addEventListener('change', () => {
+      if (autoGenerateCheckbox.checked) {
+        generatePassword();
+      }
+    });
+
+    // On page load
+    window.onload = () => {
+      updateLengthLabel();
+      if (autoGenerateCheckbox.checked) {
+        generatePassword();
+      }
+    };
+  </script>
+</body>
+</html>
